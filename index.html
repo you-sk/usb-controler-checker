@@ -7,13 +7,37 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <canvas id="particles-canvas"></canvas>
+    
     <div class="container">
-        <h1>USB ゲームコントローラー チェッカー</h1>
+        <h1>
+            <span class="title-text">USB ゲームコントローラー チェッカー</span>
+            <span class="title-glow"></span>
+        </h1>
         
         <div class="status-section">
             <h2>接続状態</h2>
             <div id="connection-status" class="status-message">コントローラーが接続されていません</div>
             <div id="controller-count" class="controller-count"></div>
+        </div>
+
+        <div class="vibration-section">
+            <h2>振動テスト</h2>
+            <div class="vibration-controls">
+                <div class="vibration-presets">
+                    <button class="vibration-btn" data-pattern="short">短い振動</button>
+                    <button class="vibration-btn" data-pattern="long">長い振動</button>
+                    <button class="vibration-btn" data-pattern="pulse">パルス</button>
+                    <button class="vibration-btn" data-pattern="wave">ウェーブ</button>
+                </div>
+                <div class="custom-vibration">
+                    <label>強度: <span id="intensity-value">50</span>%</label>
+                    <input type="range" id="vibration-intensity" min="0" max="100" value="50">
+                    <label>時間: <span id="duration-value">200</span>ms</label>
+                    <input type="range" id="vibration-duration" min="50" max="2000" value="200">
+                    <button id="custom-vibrate" class="custom-vibrate-btn">カスタム振動</button>
+                </div>
+            </div>
         </div>
 
         <div id="controllers-container" class="controllers-container">
@@ -25,10 +49,12 @@
                 <li>USBゲームコントローラーをPCに接続してください</li>
                 <li>コントローラーのボタンを押して認識させてください</li>
                 <li>ボタンやスティックを操作して動作を確認してください</li>
+                <li>振動対応コントローラーでは振動テストが可能です</li>
             </ol>
         </div>
     </div>
 
+    <script src="particles.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

@@ -1,5 +1,7 @@
 let controllers = {};
 let rafId = null;
+let buttonStates = {};
+let stickTrails = {};
 
 function connectHandler(e) {
     const gamepad = e.gamepad;
@@ -105,6 +107,20 @@ function updateController(controller) {
             if (button.value > 0 && button.value < 1) {
                 buttonEl.style.opacity = button.value;
             }
+            
+            // ボタン押下時のパーティクルエフェクト
+            const stateKey = `${controller.index}-${index}`;
+            if (!buttonStates[stateKey] && button.pressed) {
+                const rect = buttonEl.getBoundingClientRect();
+                if (window.particleSystem) {
+                    window.particleSystem.createBurst(
+                        rect.left + rect.width / 2,
+                        rect.top + rect.height / 2
+                    );
+                }
+            }
+            buttonStates[stateKey] = button.pressed;
+            
             buttonsGrid.appendChild(buttonEl);
         });
     }
@@ -133,6 +149,22 @@ function updateController(controller) {
             
             dot.style.left = `${50 + x * 40}%`;
             dot.style.top = `${50 + y * 40}%`;
+            
+            // スティック軌跡の記録
+            const trailKey = `${controller.index}-${i}`;
+            if (!stickTrails[trailKey]) {
+                stickTrails[trailKey] = [];
+            }
+            
+            if (Math.abs(x) > 0.1 || Math.abs(y) > 0.1) {
+                const rect = visualizer.getBoundingClientRect();
+                const trailX = rect.left + rect.width / 2 + x * rect.width * 0.4;
+                const trailY = rect.top + rect.height / 2 + y * rect.height * 0.4;
+                
+                if (window.particleSystem) {
+                    window.particleSystem.createTrail(trailX, trailY, i === 0 ? '#00ff88' : '#ff00ff');
+                }
+            }
             
             visualizer.appendChild(dot);
             stickDiv.appendChild(visualizer);
@@ -168,3 +200,86 @@ window.addEventListener('gamepaddisconnected', disconnectHandler);
 setInterval(scanForControllers, 1000);
 
 scanForControllers();
+
+// 振動機能の実装
+function vibrate(pattern, intensity = 0.5) {
+    Object.values(controllers).forEach(controller => {
+        if (controller.vibrationActuator) {
+            switch (pattern) {
+                case 'short':
+                    controller.vibrationActuator.playEffect('dual-rumble', {
+                        duration: 100,
+                        weakMagnitude: intensity,
+                        strongMagnitude: intensity
+                    });
+                    break;
+                case 'long':
+                    controller.vibrationActuator.playEffect('dual-rumble', {
+                        duration: 500,
+                        weakMagnitude: intensity,
+                        strongMagnitude: intensity
+                    });
+                    break;
+                case 'pulse':
+                    let pulseCount = 0;
+                    const pulseInterval = setInterval(() => {
+                        controller.vibrationActuator.playEffect('dual-rumble', {
+                            duration: 50,
+                            weakMagnitude: intensity,
+                            strongMagnitude: intensity
+                        });
+                        pulseCount++;
+                        if (pulseCount >= 5) clearInterval(pulseInterval);
+                    }, 100);
+                    break;
+                case 'wave':
+                    let waveIntensity = 0;
+                    const waveInterval = setInterval(() => {
+                        waveIntensity += 0.1;
+                        if (waveIntensity > 1) waveIntensity = 0;
+                        controller.vibrationActuator.playEffect('dual-rumble', {
+                            duration: 50,
+                            weakMagnitude: waveIntensity * intensity,
+                            strongMagnitude: waveIntensity * intensity
+                        });
+                    }, 50);
+                    setTimeout(() => clearInterval(waveInterval), 2000);
+                    break;
+            }
+        }
+    });
+}
+
+function vibrateCustom(duration, intensity) {
+    Object.values(controllers).forEach(controller => {
+        if (controller.vibrationActuator) {
+            controller.vibrationActuator.playEffect('dual-rumble', {
+                duration: duration,
+                weakMagnitude: intensity,
+                strongMagnitude: intensity
+            });
+        }
+    });
+}
+
+// 振動コントロールのイベントリスナー
+document.querySelectorAll('.vibration-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const pattern = btn.dataset.pattern;
+        vibrate(pattern);
+    });
+});
+
+document.getElementById('vibration-intensity').addEventListener('input', (e) => {
+    document.getElementById('intensity-value').textContent = e.target.value;
+});
+
+document.getElementById('vibration-duration').addEventListener('input', (e) => {
+    document.getElementById('duration-value').textContent = e.target.value;
+});
+
+document.getElementById('custom-vibrate').addEventListener('click', () => {
+    const intensity = document.getElementById('vibration-intensity').value / 100;
+    const duration = parseInt(document.getElementById('vibration-duration').value);
+    vibrateCustom(duration, intensity);
+});
