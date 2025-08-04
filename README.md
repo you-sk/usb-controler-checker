@@ -12,38 +12,6 @@ USBゲームコントローラーの接続確認と動作チェックを行うWe
 
 ## 使用方法
 
-### 1. リポジトリをクローン
-
-```bash
-git clone https://github.com/[your-username]/usb-controller-checker.git
-cd usb-controller-checker
-```
-
-### 2. ローカルサーバーを起動
-
-Python 3を使用:
-```bash
-python3 -m http.server 8080
-```
-
-または Python 2を使用:
-```bash
-python -m SimpleHTTPServer 8080
-```
-
-Node.jsのhttp-serverを使用:
-```bash
-npx http-server -p 8080
-```
-
-### 3. ブラウザでアクセス
-
-```
-http://localhost:8080
-```
-
-### 4. コントローラーをテスト
-
 1. USBゲームコントローラーをPCに接続
 2. 必要に応じてコントローラーのボタンを押して認識させる
 3. ボタンやアナログスティックを操作して動作確認
@@ -78,11 +46,3 @@ http://localhost:8080
 ## ライセンス
 
 MIT License
-
-## 作者
-
-[Your Name]
-
-## 貢献
-
-プルリクエストは歓迎します。大きな変更の場合は、まずissueを作成して変更内容について議論してください。
