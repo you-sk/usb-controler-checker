@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>USB ゲームコントローラー チェッカー</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>USB ゲームコントローラー チェッカー</h1>
+        
+        <div class="status-section">
+            <h2>接続状態</h2>
+            <div id="connection-status" class="status-message">コントローラーが接続されていません</div>
+            <div id="controller-count" class="controller-count"></div>
+        </div>
+
+        <div id="controllers-container" class="controllers-container">
+        </div>
+
+        <div class="instructions">
+            <h3>使い方:</h3>
+            <ol>
+                <li>USBゲームコントローラーをPCに接続してください</li>
+                <li>コントローラーのボタンを押して認識させてください</li>
+                <li>ボタンやスティックを操作して動作を確認してください</li>
+            </ol>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
